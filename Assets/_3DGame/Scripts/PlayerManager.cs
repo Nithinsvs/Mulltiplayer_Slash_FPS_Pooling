@@ -13,11 +13,12 @@ public class PlayerManager : MonoBehaviour
     [SerializeField] float knifeSpeed = 0f;
     [SerializeField] float rotateSpeed = 0f;
     [SerializeField] float speed = 5f;
-    [SerializeField] float jumpSpeed = 4f;
+    [SerializeField] float jumpSpeed = 10f;
     [SerializeField] float gravity = 8f;
     [SerializeField] GameObject knife;
 
     Vector3 direction;
+    Vector3 jumpUp = Vector3.up;
     CharacterController player;
 
 
@@ -27,12 +28,6 @@ public class PlayerManager : MonoBehaviour
 
 
 
-
-    private void Awake()
-    {
-
-    }
-
     void Start()
     {
         player = GetComponent<CharacterController>();
@@ -40,38 +35,20 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        /*if (nextFloor)
+        if (player.isGrounded)
         {
-            direction.y -= gravity * Time.deltaTime;
-            player.Move(direction * speed * Time.deltaTime);
-        }*/
-        if (!foundEnemy)
-        {
-            if (player.isGrounded)
-            {
-                CheckEnemies();
-
-                direction = Vector3.zero;
-                direction.z = 1;
-                jump = true;
-            }
-            else if (!player.isGrounded && jump)
-            {
-                direction.y = jumpSpeed;
-                jump = false;
-            }
-
-        }
-
-        if (Movement.pressed)
-        {
-            Debug.Log("---Pointer is on ui---");
+            //CheckEnemies();
 
             direction = Vector3.zero;
             direction.z = 1;
+            jump = true;
+        }
+        else
+        {
             direction.y -= gravity * Time.deltaTime;
             player.Move(direction * speed * Time.deltaTime);
         }
+
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -86,6 +63,22 @@ public class PlayerManager : MonoBehaviour
                 }
             }
         }
+
+        if (Movement.pressed)
+        {
+            Debug.Log("---Pointer is on ui---");
+
+            direction = Vector3.zero;
+            direction.z = 1;
+            direction.y -= gravity * Time.deltaTime;
+            player.Move(direction * speed * Time.deltaTime);
+        }
+
+        if(Input.GetKey(KeyCode.Space))
+        {
+            player.Move(jumpUp * speed * Time.deltaTime);
+        }
+
     }
     IEnumerator MoveKnife(Vector3 pos)
     {
@@ -96,7 +89,7 @@ public class PlayerManager : MonoBehaviour
             clone.transform.Rotate(new Vector3(50, 0, 0));
             yield return null;
         }
-        CheckEnemies();
+        //CheckEnemies();
     }
 
     void CheckEnemies()
